@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SIMBIX OSINT</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Unbounded:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'TS Block Bold';
+      src: local('TS Block Bold'), local('TSBlockBold'), url('TSBlockBold.ttf') format('truetype');
+      font-weight: 900;
+      font-style: normal;
+    }
+
+    :root {
+      --font-block: 'TS Block Bold', 'Unbounded', 'Archivo Black', sans-serif;
+      --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --bg-void: #030304;
+      --btn-black: #050507;
+      --border-dim: rgba(255, 255, 255, 0.14);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      padding-bottom: 108px;
+    }
+
+    /* Смешанный фон: вихри/текстура (фото 1) + густой чёрный дым/облака (фото 2) */
+    .bg-stage {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 25%, #141519 0%, #060608 55%, #010102 100%);
+    }
+
+    .bg-layer-1, .bg-layer-2 {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      pointer-events: none;
+    }
+
+    .bg-layer-1 {
+      background-image: url('bg1.jpg');
+      opacity: 0.34;
+      mix-blend-mode: lighten;
+      filter: grayscale(100%) contrast(135%);
+    }
+
+    .bg-layer-2 {
+      background-image: url('bg2.jpg');
+      opacity: 0.48;
+      mix-blend-mode: screen;
+      filter: grayscale(100%) contrast(145%);
+    }
+
+    /* Встроенный процедурный дым и звёздные вихри, если локальные bg1/bg2 ещё не добавлены */
+    .bg-swirl-svg {
+      position: absolute;
+      inset: -10%;
+      width: 120%;
+      height: 120%;
+      opacity: 0.16;
+      mix-blend-mode: screen;
+      animation: slowDrift 36s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    .bg-clouds {
+      position: absolute;
+      inset: -20%;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(255, 255, 255, 0.06) 0%, transparent 48%),
+        radial-gradient(ellipse at 80% 65%, rgba(200, 210, 230, 0.05) 0%, transparent 52%),
+        radial-gradient(ellipse at 45% 85%, rgba(255, 255, 255, 0.04) 0%, transparent 45%);
+      filter: blur(28px);
+      animation: cloudShift 24s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    .bg-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 25%, rgba(0, 0, 0, 0.86) 100%);
+      pointer-events: none;
+    }
+
+    @keyframes slowDrift {
+      0% { transform: scale(1) rotate(0deg); }
+      100% { transform: scale(1.07) rotate(2deg); }
+    }
+
+    @keyframes cloudShift {
+      0% { transform: translate(-2%, -2%) scale(1); }
+      100% { transform: translate(2%, 3%) scale(1.06); }
+    }
+
+    /* Контейнер */
+    .wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 24px 16px 20px;
+    }
+
+    /* Шапка */
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding: 18px 14px;
+      border: 1px solid var(--border-dim);
+      background: rgba(5, 5, 7, 0.72);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+    }
+
+    .logo-title {
+      font-family: var(--font-block);
+      font-weight: 900;
+      font-size: clamp(22px, 5.5vw, 32px);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-shadow: 0 0 22px rgba(255, 255, 255, 0.25);
+    }
+
+    .logo-sub {
+      margin-top: 8px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* Экраны вкладок */
+    .tab-view {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-heading {
+      font-family: var(--font-block);
+      font-size: 15px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      color: #ffffff;
+    }
+
+    /* Карточки */
+    .card {
+      background: rgba(6, 6, 8, 0.82);
+      border: 1px solid var(--border-dim);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+      backdrop-filter: blur(8px);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    @media (hover: hover) {
+      .card:hover {
+        border-color: rgba(255, 255, 255, 0.35);
+      }
+    }
+
+    .card-title {
+      font-family: var(--font-block);
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #d1d5db;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #0c0c10;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #e5e7eb;
+    }
+
+    /* Кнопки внутри страниц (чёрные + свечение и увеличение на ПК) */
+    .black-btn {
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px 16px;
+      background: var(--btn-black);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 12px;
+      font-family: var(--font-block);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  box-shadow 0.22s ease,
+                  border-color 0.22s ease,
+                  background-color 0.22s ease;
+    }
+
+    @media (hover: hover) {
+      .black-btn:hover {
+        transform: scale(1.035);
+        background: #0b0b0f;
+        border-color: #ffffff;
+        box-shadow: 0 0 24px rgba(255, 255, 255, 0.55), 0 0 48px rgba(255, 255, 255, 0.22);
+      }
+    }
+
+    .black-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Профиль */
+    .profile-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 13.5px;
+    }
+
+    .profile-row:last-child {
+      border-bottom: none;
+    }
+
+    .profile-val {
+      font-family: var(--font-block);
+      font-size: 12px;
+      color: #ffffff;
+    }
+
+    /* Нижняя панель из 3 чёрных кнопок */
+    .bottom-dock {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 50;
+      padding: 12px 14px calc(14px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, rgba(2, 2, 3, 0.96) 65%, rgba(2, 2, 3, 0));
+      display: flex;
+      justify-content: center;
+    }
+
+    .dock-inner {
+      width: 100%;
+      max-width: 680px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background: var(--btn-black);
+      color: #a1a1aa;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 12px;
+      padding: 15px 6px;
+      font-family: var(--font-block);
+      font-weight: 900;
+      font-size: clamp(10px, 2.8vw, 12.5px);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  box-shadow 0.22s ease,
+                  border-color 0.22s ease,
+                  color 0.22s ease,
+                  background-color 0.22s ease;
+    }
+
+    .nav-btn.active {
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.65);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.22);
+    }
+
+    /* Эффект для ПК при наведении курсора на нижние кнопки */
+    @media (hover: hover) {
+      .nav-btn:hover {
+        transform: translateY(-4px) scale(1.06);
+        background: #0a0a0e;
+        color: #ffffff;
+        border-color: #ffffff;
+        box-shadow: 0 0 24px rgba(255, 255, 255, 0.65),
+                    0 0 46px rgba(210, 225, 255, 0.3),
+                    inset 0 0 10px rgba(255, 255, 255, 0.18);
+      }
+    }
+
+    .nav-btn:active {
+      transform: scale(0.96);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Слой смешанного фона -->
+  <div class="bg-stage">
+    <div class="bg-layer-1"></div>
+    <div class="bg-layer-2"></div>
+    <svg class="bg-swirl-svg" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M120 340C220 210 380 230 430 350C470 445 360 520 290 460C235 412 275 335 335 355" stroke="white" stroke-width="3" stroke-dasharray="10 8"/>
+      <path d="M520 180C620 110 740 190 700 310C665 415 540 420 515 340C495 275 565 245 605 285" stroke="white" stroke-width="2.5" stroke-dasharray="14 10"/>
+      <circle cx="620" cy="140" r="68" stroke="white" stroke-width="2" stroke-dasharray="6 6"/>
+      <circle cx="240" cy="150" r="42" stroke="white" stroke-width="1.8" stroke-dasharray="5 5"/>
+    </svg>
+    <div class="bg-clouds"></div>
+    <div class="bg-vignette"></div>
+  </div>
+
+  <div class="wrap">
+    <header class="header">
+      <div class="logo-title">SIMBIX OSINT</div>
+      <div class="logo-sub">РАЗВЕДКА ПО ОТКРЫТЫМ ИСТОЧНИКАМ</div>
+    </header>
+
+    <!-- ВКЛАДКА 1: ФУНКЦИИ -->
+    <main id="tab-functions" class="tab-view active">
+      <div class="section-heading">ВСЕ ФУНКЦИИ СИСТЕМЫ</div>
+
+      <div class="card">
+        <div class="card-title">1. OSINT ПО НОМЕРУ ТЕЛЕФОНА</div>
+        <div class="card-desc">
+          Автоматический разбор номера по всем открытым веткам: определение оператора, региона и часового пояса, генерация всех форматов записи и быстрые ссылки для проверки через открытые источники.
+        </div>
+        <div class="tag-row">
+          <span class="tag">Оператор и регион</span>
+          <span class="tag">Поисковики (Google / Яндекс / DDG)</span>
+          <span class="tag">Мессенджеры (TG / WA / Viber)</span>
+          <span class="tag">Карты и справочники (2ГИС / Zoon)</span>
+          <span class="tag">Объявления (Авито / Юла)</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">2. ИНТЕРАКТИВНЫЙ ГРАФ СВЯЗЕЙ (ДЕРЕВО)</div>
+        <div class="card-desc">
+          Визуальная доска расследования с узлами и ветками: связывай номер, никнеймы, соцсети, локации и заметки в единое интерактивное дерево прямо внутри Telegram.
+        </div>
+        <div class="tag-row">
+          <span class="tag">Узлы и ветки</span>
+          <span class="tag">Ручное добавление зацепок</span>
+          <span class="tag">Экспорт досье</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">3. ПОИСК ПО НИКУ И ОТКРЫТЫМ СЛЕДАМ</div>
+        <div class="card-desc">
+          Проверка публичного никнейма по открытым площадкам, репозиториям, форумам и игровым профилям без входа в аккаунты и без закрытых баз.
+        </div>
+        <div class="tag-row">
+          <span class="tag">GitHub / GitLab</span>
+          <span class="tag">Steam / Reddit</span>
+          <span class="tag">Открытые профили</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- ВКЛАДКА 2: ОПЛАТА -->
+    <section id="tab-payment" class="tab-view">
+      <div class="section-heading">ТАРИФЫ И ОПЛАТА VIP</div>
+
+      <div class="card">
+        <div class="card-title">VIP ДОСТУП — 7 ДНЕЙ</div>
+        <div class="card-desc">
+          Снятие дневного лимита проверок, полный набор OSINT-веток по номеру телефона и сохранение интерактивных графов связей.
+        </div>
+        <button class="black-btn" onclick="sendTariffToBot('vip_7')">КУПИТЬ — 149 ₽ / 85 ⭐</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">VIP ДОСТУП — 30 ДНЕЙ</div>
+        <div class="card-desc">
+          Максимальный приоритет запросов, безлимитный разбор номеров и ников, неограниченное количество деревьев связей.
+        </div>
+        <button class="black-btn" onclick="sendTariffToBot('vip_30')">КУПИТЬ — 349 ₽ / 199 ⭐</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">VIP НАВСЕГДА</div>
+        <div class="card-desc">
+          Разовая оплата — полный доступ ко всем текущим и будущим модулям Simbix OSINT без подписки.
+        </div>
+        <button class="black-btn" onclick="sendTariffToBot('vip_forever')">КУПИТЬ — 690 ₽ / 390 ⭐</button>
+      </div>
+    </section>
+
+    <!-- ВКЛАДКА 3: ПРОФИЛЬ -->
+    <section id="tab-profile" class="tab-view">
+      <div class="section-heading">ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ</div>
+
+      <div class="card">
+        <div class="profile-row">
+          <span>Имя</span>
+          <span class="profile-val" id="tg-name">ГОСТЬ</span>
+        </div>
+        <div class="profile-row">
+          <span>Username</span>
+          <span class="profile-val" id="tg-username">@НЕ_УКАЗАН</span>
+        </div>
+        <div class="profile-row">
+          <span>Telegram ID</span>
+          <span class="profile-val" id="tg-id">000000000</span>
+        </div>
+        <div class="profile-row">
+          <span>Статус доступа</span>
+          <span class="profile-val" id="tg-status">БАЗОВЫЙ (3/ДЕНЬ)</span>
+        </div>
+        <button class="black-btn" onclick="copyRefLink()">СКОПИРОВАТЬ РЕФЕРАЛЬНУЮ ССЫЛКУ</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- 3 ЧЁРНЫЕ КНОПКИ ВНИЗУ -->
+  <nav class="bottom-dock">
+    <div class="dock-inner">
+      <button class="nav-btn active" data-tab="functions" onclick="switchTab('functions', this)">ФУНКЦИИ</button>
+      <button class="nav-btn" data-tab="payment" onclick="switchTab('payment', this)">ОПЛАТА</button>
+      <button class="nav-btn" data-tab="profile" onclick="switchTab('profile', this)">ПРОФИЛЬ</button>
+    </div>
+  </nav>
+
+  <script>
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
+      if (user) {
+        document.getElementById('tg-name').textContent = (user.first_name || 'ПОЛЬЗОВАТЕЛЬ').toUpperCase();
+        document.getElementById('tg-username').textContent = user.username ? '@' + user.username.toUpperCase() : 'БЕЗ НИКА';
+        document.getElementById('tg-id').textContent = String(user.id);
+        if (String(user.id) === '6257028021') {
+          document.getElementById('tg-status').textContent = 'ADMIN / VIP';
+        }
+      }
+    }
+
+    function switchTab(tabName, btnEl) {
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+      btnEl.classList.add('active');
+    }
+
+    function sendTariffToBot(tariffCode) {
+      if (tg) {
+        tg.sendData(JSON.stringify({ action: 'buy_tariff', tariff: tariffCode }));
+      } else {
+        alert('Тариф выбран: ' + tariffCode + '. При запуске внутри Telegram откроется оплата в боте.');
+      }
+    }
+
+    function copyRefLink() {
+      const uid = document.getElementById('tg-id').textContent;
+      const link = 'https://t.me/simbix_osint_bot?start=ref_' + uid;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(link);
+      }
+      alert('Реферальная ссылка скопирована:\n' + link);
+    }
+  </script>
+</body>
+</html>
