@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://telegram.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://*.trycloudflare.com;" />
   <title>SIMBIX OSINT</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,14 +77,11 @@
       pointer-events: none;
     }
 
-    @keyframes slowDrift {
-      0% { transform: scale(1) rotate(0deg); }
-      100% { transform: scale(1.07) rotate(2deg); }
-    }
+    @keyframes slowDrift { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.07) rotate(2deg); } }
+    @keyframes cloudShift { 0% { transform: translate(-2%, -2%) scale(1); } 100% { transform: translate(2%, 3%) scale(1.06); } }
 
-    @keyframes cloudShift {
-      0% { transform: translate(-2%, -2%) scale(1); }
-      100% { transform: translate(2%, 3%) scale(1.06); }
+    @media (prefers-reduced-motion: reduce) {
+      .bg-swirl-svg, .bg-clouds { animation: none; }
     }
 
     .wrap { max-width: 740px; margin: 0 auto; padding: 18px 14px 20px; }
@@ -153,7 +151,6 @@
     }
 
     .card-desc { font-size: 13px; line-height: 1.5; color: #d1d5db; }
-
     .search-box { display: flex; flex-direction: column; gap: 9px; }
 
     .search-input {
@@ -178,24 +175,6 @@
     }
 
     .search-input:focus { border-color: #ffffff; box-shadow: 0 0 18px rgba(255, 255, 255, 0.22); }
-
-    .chain-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-
-    .chain-btn {
-      background: #040406;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      color: #9ca3af;
-      border-radius: 10px;
-      padding: 10px 8px;
-      font-size: 11px;
-      line-height: 1.35;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .chain-btn strong { display: block; font-family: var(--font-block); font-size: 10px; color: #ffffff; margin-bottom: 3px; text-transform: uppercase; }
-    .chain-btn.active { border-color: #ffffff; background: #0b0b10; color: #f3f4f6; box-shadow: 0 0 14px rgba(255, 255, 255, 0.22); }
 
     .black-btn {
       width: 100%;
@@ -257,6 +236,32 @@
 
     .badge-found { border-color: rgba(255, 255, 255, 0.72); box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.14); }
     .badge-miss { opacity: 0.45; }
+
+    .phone-candidate {
+      background: #040407;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 11px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+
+    .phone-candidate-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+
+    .chance-pill {
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #121218;
+      border: 1px solid #ffffff;
+      font-family: var(--font-block);
+      font-size: 10px;
+      color: #ffffff;
+    }
 
     .profile-row {
       display: flex;
@@ -338,7 +343,7 @@
   <div class="wrap">
     <header class="header">
       <div class="logo-title">SIMBIX OSINT</div>
-      <div class="logo-sub">СЕРВЕРНАЯ РАЗВЕДКА ПО ОТКРЫТЫМ ИСТОЧНИКАМ</div>
+      <div class="logo-sub">ЦЕПОЧКА: @ЮЗ ➔ НОМЕРА + ШАНС % ➔ СОЦСЕТИ</div>
       <div class="quota-banner" id="header-quota">ПОДКЛЮЧЕНИЕ К СЕРВЕРУ...</div>
     </header>
 
@@ -353,8 +358,7 @@
             class="search-input"
             type="text"
             maxlength="120"
-            placeholder="Введи @username, ID, телефон +7... или ФИО (ИФ / ФО / ИО / ФИО)..."
-            onkeydown="if(event.key==='Enter') runServerSearch()"
+            placeholder="Введи @username, ID, телефон +7... или ФИО..."
           />
           <input
             id="city-input"
@@ -362,21 +366,8 @@
             type="text"
             maxlength="50"
             placeholder="Город / регион для уточнения (необязательно)"
-            onkeydown="if(event.key==='Enter') runServerSearch()"
           />
-
-          <div class="chain-switch">
-            <button id="chain-btn-1" class="chain-btn active" onclick="setChainMode(1)">
-              <strong>ВАРИАНТ 1: ЮЗ ➔ НОМЕР</strong>
-              Сначала поиск номера ➔ WA / TG / TikTok / Snapchat
-            </button>
-            <button id="chain-btn-2" class="chain-btn" onclick="setChainMode(2)">
-              <strong>ВАРИАНТ 2: ЮЗ ➔ ИМЯ / ФОТО</strong>
-              Сначала имя, био и фото ➔ номер и соцсети
-            </button>
-          </div>
-
-          <button id="search-submit-btn" class="black-btn" onclick="runServerSearch()">ЗАПУСТИТЬ OSINT-СКАН</button>
+          <button id="search-submit-btn" class="black-btn" type="button">ЗАПУСТИТЬ 3-ШАГОВЫЙ OSINT-СКАН</button>
         </div>
       </div>
 
@@ -393,8 +384,8 @@
         <div class="card-title">VIP ДОСТУП — 7 ДНЕЙ</div>
         <div class="card-desc">25 запросов в день (140 в неделю). После окончания подписки лимит остаётся 5 запросов в 3 дня.</div>
         <div class="btn-pair">
-          <button class="black-btn" onclick="createServerOrder('vip_7', 'sbp', this)">СБП — 149 ₽</button>
-          <button class="black-btn" onclick="createServerOrder('vip_7', 'stars', this)">STARS — 85 ⭐</button>
+          <button class="black-btn" type="button" data-order-item="vip_7" data-order-method="sbp">СБП — 149 ₽</button>
+          <button class="black-btn" type="button" data-order-item="vip_7" data-order-method="stars">STARS — 85 ⭐</button>
         </div>
       </div>
 
@@ -402,17 +393,17 @@
         <div class="card-title">VIP ДОСТУП — 30 ДНЕЙ</div>
         <div class="card-desc">Полный доступ: 25 запросов в день / 140 в неделю / 500 в месяц.</div>
         <div class="btn-pair">
-          <button class="black-btn" onclick="createServerOrder('vip_30', 'sbp', this)">СБП — 349 ₽</button>
-          <button class="black-btn" onclick="createServerOrder('vip_30', 'stars', this)">STARS — 199 ⭐</button>
+          <button class="black-btn" type="button" data-order-item="vip_30" data-order-method="sbp">СБП — 349 ₽</button>
+          <button class="black-btn" type="button" data-order-item="vip_30" data-order-method="stars">STARS — 199 ⭐</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title">VIP НАВСЕГДА</div>
-        <div class="card-desc">Пожизненный VIP-доступ (25/день • 140/нед • 500/мес) без продлений.</div>
+        <div class="card-title">VIP БЕЗЛИМИТ ПО СРОКУ</div>
+        <div class="card-desc">Долгосрочный VIP-доступ (25/день • 140/нед • 500/мес) без продлений.</div>
         <div class="btn-pair">
-          <button class="black-btn" onclick="createServerOrder('vip_forever', 'sbp', this)">СБП — 690 ₽</button>
-          <button class="black-btn" onclick="createServerOrder('vip_forever', 'stars', this)">STARS — 390 ⭐</button>
+          <button class="black-btn" type="button" data-order-item="vip_forever" data-order-method="sbp">СБП — 690 ₽</button>
+          <button class="black-btn" type="button" data-order-item="vip_forever" data-order-method="stars">STARS — 390 ⭐</button>
         </div>
       </div>
 
@@ -421,57 +412,63 @@
       <div class="card">
         <div class="card-title">ПАКЕТ: 1 ЗАПРОС</div>
         <div class="btn-pair">
-          <button class="black-btn" onclick="createServerOrder('pack_1', 'sbp', this)">СБП — 29 ₽</button>
-          <button class="black-btn" onclick="createServerOrder('pack_1', 'stars', this)">STARS — 15 ⭐</button>
+          <button class="black-btn" type="button" data-order-item="pack_1" data-order-method="sbp">СБП — 29 ₽</button>
+          <button class="black-btn" type="button" data-order-item="pack_1" data-order-method="stars">STARS — 15 ⭐</button>
         </div>
       </div>
 
       <div class="card">
         <div class="card-title">ПАКЕТ: 3 ЗАПРОСА</div>
         <div class="btn-pair">
-          <button class="black-btn" onclick="createServerOrder('pack_3', 'sbp', this)">СБП — 69 ₽</button>
-          <button class="black-btn" onclick="createServerOrder('pack_3', 'stars', this)">STARS — 39 ⭐</button>
+          <button class="black-btn" type="button" data-order-item="pack_3" data-order-method="sbp">СБП — 69 ₽</button>
+          <button class="black-btn" type="button" data-order-item="pack_3" data-order-method="stars">STARS — 39 ⭐</button>
         </div>
       </div>
 
       <div class="card">
         <div class="card-title">ПАКЕТ: 5 ЗАПРОСОВ</div>
         <div class="btn-pair">
-          <button class="black-btn" onclick="createServerOrder('pack_5', 'sbp', this)">СБП — 99 ₽</button>
-          <button class="black-btn" onclick="createServerOrder('pack_5', 'stars', this)">STARS — 55 ⭐</button>
+          <button class="black-btn" type="button" data-order-item="pack_5" data-order-method="sbp">СБП — 99 ₽</button>
+          <button class="black-btn" type="button" data-order-item="pack_5" data-order-method="stars">STARS — 55 ⭐</button>
         </div>
       </div>
 
       <div class="card">
         <div class="card-title">ПАКЕТ: 10 ЗАПРОСОВ</div>
         <div class="btn-pair">
-          <button class="black-btn" onclick="createServerOrder('pack_10', 'sbp', this)">СБП — 179 ₽</button>
-          <button class="black-btn" onclick="createServerOrder('pack_10', 'stars', this)">STARS — 99 ⭐</button>
+          <button class="black-btn" type="button" data-order-item="pack_10" data-order-method="sbp">СБП — 179 ₽</button>
+          <button class="black-btn" type="button" data-order-item="pack_10" data-order-method="stars">STARS — 99 ⭐</button>
         </div>
       </div>
 
       <div class="card">
         <div class="card-title">ПАКЕТ: 20 ЗАПРОСОВ</div>
         <div class="btn-pair">
-          <button class="black-btn" onclick="createServerOrder('pack_20', 'sbp', this)">СБП — 299 ₽</button>
-          <button class="black-btn" onclick="createServerOrder('pack_20', 'stars', this)">STARS — 169 ⭐</button>
+          <button class="black-btn" type="button" data-order-item="pack_20" data-order-method="sbp">СБП — 299 ₽</button>
+          <button class="black-btn" type="button" data-order-item="pack_20" data-order-method="stars">STARS — 169 ⭐</button>
         </div>
       </div>
 
       <div class="card">
         <div class="card-title">ПАКЕТ: 50 ЗАПРОСОВ</div>
         <div class="btn-pair">
-          <button class="black-btn" onclick="createServerOrder('pack_50', 'sbp', this)">СБП — 590 ₽</button>
-          <button class="black-btn" onclick="createServerOrder('pack_50', 'stars', this)">STARS — 330 ⭐</button>
+          <button class="black-btn" type="button" data-order-item="pack_50" data-order-method="sbp">СБП — 590 ₽</button>
+          <button class="black-btn" type="button" data-order-item="pack_50" data-order-method="stars">STARS — 330 ⭐</button>
         </div>
       </div>
 
       <div class="card">
         <div class="card-title">ПАКЕТ: 100 ЗАПРОСОВ</div>
         <div class="btn-pair">
-          <button class="black-btn" onclick="createServerOrder('pack_100', 'sbp', this)">СБП — 990 ₽</button>
-          <button class="black-btn" onclick="createServerOrder('pack_100', 'stars', this)">STARS — 550 ⭐</button>
+          <button class="black-btn" type="button" data-order-item="pack_100" data-order-method="sbp">СБП — 990 ₽</button>
+          <button class="black-btn" type="button" data-order-item="pack_100" data-order-method="stars">STARS — 550 ⭐</button>
         </div>
+      </div>
+
+      <div class="section-heading">МОИ ЗАКАЗЫ</div>
+      <div class="card">
+        <div id="orders-history"><div class="card-desc">История заказов загрузится после подключения к серверу.</div></div>
+        <button id="refresh-orders-btn" class="black-btn" type="button">ОБНОВИТЬ СТАТУСЫ ЗАКАЗОВ</button>
       </div>
     </section>
 
@@ -486,39 +483,50 @@
         <div class="profile-row"><span>Статус (сервер)</span><span class="profile-val" id="tg-status">ЗАГРУЗКА...</span></div>
         <div class="profile-row"><span>Доступно запросов</span><span class="profile-val" id="tg-quota-detail">—</span></div>
         <div class="profile-row"><span>Пакетный баланс</span><span class="profile-val" id="tg-packs">0</span></div>
-        <button class="black-btn" onclick="copyRefLink()">СКОПИРОВАТЬ РЕФЕРАЛЬНУЮ ССЫЛКУ</button>
+        <button id="copy-ref-btn" class="black-btn" type="button">СКОПИРОВАТЬ РЕФЕРАЛЬНУЮ ССЫЛКУ</button>
       </div>
 
       <div class="card">
-        <div class="card-title">ПОДКЛЮЧЕНИЕ К API TERMUX</div>
-        <div class="card-desc">Укажи HTTPS-адрес твоего сервера (например, ссылку Cloudflare Tunnel из Termux):</div>
+        <div class="card-title">ПОДКЛЮЧЕНИЕ К ДОВЕРЕННОМУ API</div>
+        <div class="card-desc">Принимаются только защищённые HTTPS-адреса туннеля <b>*.trycloudflare.com</b>:</div>
         <input id="api-url-input" class="search-input sub-input" style="margin-top:8px;" type="url" placeholder="https://xxxx.trycloudflare.com" />
-        <button class="black-btn" onclick="saveApiEndpoint()">СОХРАНИТЬ И ОБНОВИТЬ ПРОФИЛЬ</button>
+        <button id="save-api-btn" class="black-btn" type="button">СОХРАНИТЬ И ОБНОВИТЬ ПРОФИЛЬ</button>
       </div>
     </section>
   </div>
 
   <nav class="bottom-dock">
     <div class="dock-inner">
-      <button class="nav-btn active" data-tab="search" onclick="switchTab('search', this)">ПОИСК</button>
-      <button class="nav-btn" data-tab="payment" onclick="switchTab('payment', this)">ОПЛАТА</button>
-      <button class="nav-btn" data-tab="profile" onclick="switchTab('profile', this)">ПРОФИЛЬ</button>
+      <button class="nav-btn active" type="button" data-tab="search">ПОИСК</button>
+      <button class="nav-btn" type="button" data-tab="payment">ОПЛАТА</button>
+      <button class="nav-btn" type="button" data-tab="profile">ПРОФИЛЬ</button>
     </div>
   </nav>
 
   <script>
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
     const initDataRaw = tg && tg.initData ? tg.initData : '';
-    let chainMode = 1;
     let isBusy = false;
+
+    // Строгая валидация адреса API: initData отправляется ТОЛЬКО на доверенный *.trycloudflare.com
+    function isTrustedApiUrl(rawUrl) {
+      if (!rawUrl) return false;
+      try {
+        const parsed = new URL(rawUrl);
+        return (
+          parsed.protocol === 'https:' &&
+          parsed.hostname.endsWith('.trycloudflare.com') &&
+          parsed.hostname.length > '.trycloudflare.com'.length
+        );
+      } catch (e) {
+        return false;
+      }
+    }
 
     function getApiBase() {
       try {
-        const fromQuery = new URLSearchParams(window.location.search).get('api');
-        if (fromQuery) {
-          localStorage.setItem('simbix_api_url', fromQuery.replace(/\/+$/, ''));
-        }
-        return (localStorage.getItem('simbix_api_url') || '').replace(/\/+$/, '');
+        const saved = (localStorage.getItem('simbix_api_url') || '').replace(/\/+$/, '');
+        return isTrustedApiUrl(saved) ? saved : '';
       } catch (e) {
         return '';
       }
@@ -526,8 +534,8 @@
 
     function saveApiEndpoint() {
       const val = document.getElementById('api-url-input').value.trim().replace(/\/+$/, '');
-      if (val && !val.startsWith('https://')) {
-        alert('Адрес API должен начинаться с https://');
+      if (!isTrustedApiUrl(val)) {
+        alert('Разрешены только доверенные HTTPS-адреса вида https://имя.trycloudflare.com');
         return;
       }
       try {
@@ -553,12 +561,22 @@
       return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
     }
 
-    function isSafeUrl(url) {
+    function isSafeLinkUrl(url) {
       return /^(https?:\/\/|tg:\/\/|viber:\/\/)/i.test(String(url));
     }
 
-    function switchTab(tabName, btnEl) {
+    function isSafeImageUrl(url) {
+      try {
+        const p = new URL(String(url));
+        return p.protocol === 'https:';
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function switchTab(tabName) {
       const target = document.getElementById('tab-' + tabName);
+      const btnEl = document.querySelector(`.nav-btn[data-tab="${tabName}"]`);
       if (!target || !btnEl) return;
       document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -566,10 +584,24 @@
       btnEl.classList.add('active');
     }
 
-    function setChainMode(mode) {
-      chainMode = mode;
-      document.getElementById('chain-btn-1').classList.toggle('active', mode === 1);
-      document.getElementById('chain-btn-2').classList.toggle('active', mode === 2);
+    function renderOrdersHistory(orders) {
+      const box = document.getElementById('orders-history');
+      if (!Array.isArray(orders) || orders.length === 0) {
+        box.innerHTML = `<div class="card-desc">Заказов пока нет.</div>`;
+        return;
+      }
+      const statusMap = {
+        pending: 'ОЖИДАЕТ ОПЛАТЫ',
+        paid: 'ОПЛАЧЕН ✅',
+        rejected: 'ОТКЛОНЁН ❌',
+        expired: 'ИСТЁК ⏳',
+      };
+      box.innerHTML = orders.map(o => `
+        <div class="profile-row">
+          <span>${escapeHtml(o.order_id)} • ${escapeHtml(o.item_title)}</span>
+          <span class="profile-val">${escapeHtml(statusMap[o.status] || o.status)}</span>
+        </div>
+      `).join('');
     }
 
     function applyUserQuotaUI(u) {
@@ -602,27 +634,49 @@
       if (!base) {
         throw new Error('NO_API_URL');
       }
-      const resp = await fetch(base + path, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Telegram-Init-Data': initDataRaw,
-          ...(options.headers || {}),
-        },
-      });
-      const data = await resp.json();
-      if (!resp.ok) {
-        const err = new Error(data.error || 'Ошибка сервера');
-        err.data = data;
-        throw err;
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 16000);
+
+      try {
+        const resp = await fetch(base + path, {
+          ...options,
+          signal: controller.signal,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Telegram-Init-Data': initDataRaw,
+            ...(options.headers || {}),
+          },
+        });
+        const text = await resp.text();
+        let data = {};
+        try {
+          data = text ? JSON.parse(text) : {};
+        } catch (e) {
+          throw new Error('Сервер вернул некорректный ответ');
+        }
+        if (!resp.ok) {
+          const err = new Error(data.error || 'Ошибка сервера');
+          err.data = data;
+          throw err;
+        }
+        return data;
+      } catch (e) {
+        if (e.name === 'AbortError') {
+          throw new Error('Сервер отвечает слишком долго (тайм-аут 16 сек).');
+        }
+        throw e;
+      } finally {
+        clearTimeout(timer);
       }
-      return data;
     }
 
     async function loadServerProfile() {
       try {
         const data = await apiCall('/api/me', { method: 'GET' });
-        if (data.ok) applyUserQuotaUI(data.user);
+        if (data.ok) {
+          applyUserQuotaUI(data.user);
+          renderOrdersHistory(data.orders);
+        }
       } catch (e) {
         document.getElementById('header-quota').textContent =
           e.message === 'NO_API_URL'
@@ -645,36 +699,58 @@
 
       isBusy = true;
       btn.disabled = true;
-      btn.textContent = 'СКАНИРОВАНИЕ НА СЕРВЕРЕ...';
-      box.innerHTML = `<div class="card"><div class="card-desc">⏳ Выполняется проверка карточки Telegram, площадок и открытых источников...</div></div>`;
+      btn.textContent = 'СКАНИРОВАНИЕ...';
+      box.innerHTML = `<div class="card"><div class="card-desc">⏳ Шаг 1: проверка @юзернейма ➔ Шаг 2: поиск засвеченных номеров ➔ Шаг 3: проверка соцсетей...</div></div>`;
 
       try {
         const res = await apiCall('/api/search', {
           method: 'POST',
-          body: JSON.stringify({ query, city, chain_mode: chainMode }),
+          body: JSON.stringify({ query, city, chain_mode: 1 }),
         });
 
         if (res.user) applyUserQuotaUI(res.user);
 
+        // Шаг 1: Карточка цели
         let htmlOut = `<div class="card">`;
         if (res.admin_bypass) {
           htmlOut += `<div class="card-desc" style="margin-bottom:8px;"><b>ADMIN BYPASS:</b> защищённая цель открыта только для тебя.</div>`;
         }
-        if (res.avatar_url && isSafeUrl(res.avatar_url)) {
-          htmlOut += `<img class="avatar-preview" src="${escapeHtml(res.avatar_url)}" alt="avatar" onerror="this.style.display='none'" />`;
+        if (res.avatar_url && isSafeImageUrl(res.avatar_url)) {
+          htmlOut += `<img class="avatar-preview" src="${escapeHtml(res.avatar_url)}" alt="avatar" />`;
         }
-        htmlOut += `<div class="card-title">РЕЗУЛЬТАТ СКАНИРОВАНИЯ: ${escapeHtml(res.target || query)}</div>`;
+        htmlOut += `<div class="card-title">ШАГ 1 • РЕЗУЛЬТАТ ПО ЦЕЛИ: ${escapeHtml(res.target || query)}</div>`;
         (res.meta || []).forEach(m => {
           htmlOut += `<div class="profile-row"><span>${escapeHtml(m.label)}</span><span class="profile-val">${escapeHtml(m.value)}</span></div>`;
         });
         htmlOut += `</div>`;
 
+        // Шаг 2: Найденные номера телефонов с процентом вероятности (для @username)
+        if (res.kind === 'tg_username') {
+          htmlOut += `<div class="card"><div class="card-title">ШАГ 2 • ВОЗМОЖНЫЕ НОМЕРА ТЕЛЕФОНА (ПО ОТКРЫТЫМ СЛЕДАМ)</div>`;
+          if (Array.isArray(res.candidate_phones) && res.candidate_phones.length > 0) {
+            res.candidate_phones.forEach(c => {
+              htmlOut += `
+                <div class="phone-candidate">
+                  <div class="phone-candidate-top">
+                    <span class="osint-link-title">${escapeHtml(c.formatted)}</span>
+                    <span class="chance-pill">ШАНС: ${escapeHtml(c.confidence)}%</span>
+                  </div>
+                  <div class="osint-link-sub">${escapeHtml(c.operator)} • ${escapeHtml(c.source)}</div>
+                </div>`;
+            });
+          } else {
+            htmlOut += `<div class="card-desc">Публичных номеров в био и ленте не обнаружено (номер скрыт настройками приватности Telegram). Используй поисковые дорки ниже для проверки упоминаний в вебе.</div>`;
+          }
+          htmlOut += `</div>`;
+        }
+
+        // Шаг 3: Соцсети
         if (Array.isArray(res.platforms) && res.platforms.length) {
-          htmlOut += `<div class="card"><div class="card-title">ЖИВАЯ ПРОВЕРКА ПЛОЩАДОК</div><div class="link-grid">`;
+          htmlOut += `<div class="card"><div class="card-title">ШАГ 3 • СОЦСЕТИ И ПЛОЩАДКИ ПО НИКУ</div><div class="link-grid">`;
           res.platforms.forEach(p => {
-            if (!isSafeUrl(p.url)) return;
+            if (!isSafeLinkUrl(p.url)) return;
             const cls = p.status === 'FOUND' ? 'badge-found' : (p.status === 'NOT_FOUND' ? 'badge-miss' : '');
-            const label = p.status === 'FOUND' ? 'НАЙДЕН ✅' : (p.status === 'NOT_FOUND' ? 'НЕ НАЙДЕН' : 'ПРОВЕРИТЬ');
+            const label = p.status === 'FOUND' ? 'НАЙДЕН ✅' : (p.status === 'NOT_FOUND' ? 'НЕ НАЙДЕН' : 'ПРОВЕРИТЬ ВРУЧНУЮ');
             htmlOut += `
               <a class="osint-link ${cls}" href="${escapeHtml(p.url)}" target="_blank" rel="noopener noreferrer">
                 <span class="osint-link-title">${escapeHtml(p.site)}</span>
@@ -684,10 +760,11 @@
           htmlOut += `</div></div>`;
         }
 
+        // Дополнительные ветки
         (res.sections || []).forEach(sec => {
           htmlOut += `<div class="card"><div class="card-title">${escapeHtml(sec.title)}</div><div class="link-grid">`;
           (sec.links || []).forEach(lnk => {
-            if (!isSafeUrl(lnk.url)) return;
+            if (!isSafeLinkUrl(lnk.url)) return;
             htmlOut += `
               <a class="osint-link" href="${escapeHtml(lnk.url)}" target="_blank" rel="noopener noreferrer">
                 <span class="osint-link-title">${escapeHtml(lnk.title)}</span>
@@ -703,12 +780,12 @@
         box.innerHTML = `
           <div class="card shield-alert">
             <div class="card-title">⚠️ ОШИБКА / ОГРАНИЧЕНИЕ</div>
-            <div class="card-desc">${escapeHtml(e.message === 'NO_API_URL' ? 'Сначала укажи HTTPS-ссылку API в разделе «Профиль» или отправь запрос прямо в чат бота.' : e.message)}</div>
+            <div class="card-desc">${escapeHtml(e.message === 'NO_API_URL' ? 'Сначала укажи HTTPS-ссылку API во вкладке «Профиль» или отправь запрос в чат бота.' : e.message)}</div>
           </div>`;
       } finally {
         isBusy = false;
         btn.disabled = false;
-        btn.textContent = 'ЗАПУСТИТЬ OSINT-СКАН';
+        btn.textContent = 'ЗАПУСТИТЬ 3-ШАГОВЫЙ OSINT-СКАН';
       }
     }
 
@@ -726,16 +803,23 @@
           body: JSON.stringify({ item_code: itemCode, method }),
         });
 
-        if (method === 'stars' && res.invoice_url) {
+        loadServerProfile();
+
+        if (method === 'stars') {
+          if (!res.invoice_url) {
+            throw new Error('Сервер не вернул ссылку на оплату Stars.');
+          }
           if (tg && tg.openInvoice) {
             tg.openInvoice(res.invoice_url, status => {
+              loadServerProfile();
               if (status === 'paid') {
-                loadServerProfile();
-                orderBox.innerHTML = `<div class="card"><div class="card-title">✅ ОПЛАТА STARS ПРОШЛА</div><div class="card-desc">Заказ ${escapeHtml(res.order.order_id)} активирован!</div></div>`;
+                orderBox.innerHTML = `<div class="card"><div class="card-title">✅ ОПЛАТА STARS ПОДТВЕРЖДЕНА</div><div class="card-desc">Заказ ${escapeHtml(res.order.order_id)} выполнен!</div></div>`;
+              } else if (status === 'cancelled') {
+                orderBox.innerHTML = `<div class="card"><div class="card-title">ОПЛАТА ОТМЕНЕНА</div><div class="card-desc">Заказ ${escapeHtml(res.order.order_id)} ожидает оплаты 30 минут.</div></div>`;
               }
             });
           } else {
-            window.open(res.invoice_url, '_blank');
+            orderBox.innerHTML = `<div class="card"><div class="card-desc">Открой мини-приложение внутри Telegram для оплаты звёздами.</div></div>`;
           }
           return;
         }
@@ -744,17 +828,17 @@
           const d = res.payment_details;
           orderBox.innerHTML = `
             <div class="card shield-alert">
-              <div class="card-title">ЗАКАЗ ${escapeHtml(res.order.order_id)} СОЗДАН</div>
+              <div class="card-title">ЗАКАЗ ${escapeHtml(res.order.order_id)} (ДЕЙСТВУЕТ 30 МИН)</div>
               <div class="profile-row"><span>Позиция</span><span class="profile-val">${escapeHtml(res.order.item_title)}</span></div>
               <div class="profile-row"><span>Сумма к переводу</span><span class="profile-val">${escapeHtml(res.order.amount_rub)} ₽</span></div>
               <div class="profile-row"><span>Банк</span><span class="profile-val">${escapeHtml(d.bank)}</span></div>
               <div class="profile-row"><span>Карта</span><span class="profile-val">${escapeHtml(d.card)}</span></div>
               <div class="profile-row"><span>Телефон СБП</span><span class="profile-val">${escapeHtml(d.phone)}</span></div>
               <div class="btn-pair">
-                <button class="black-btn" onclick="safeCopy('${escapeHtml(d.card)}')">КОПИРОВАТЬ КАРТУ</button>
-                <button class="black-btn" onclick="safeCopy('${escapeHtml(d.phone)}')">КОПИРОВАТЬ СБП</button>
+                <button class="black-btn" type="button" data-copy-text="${escapeHtml(d.card)}">КОПИРОВАТЬ КАРТУ</button>
+                <button class="black-btn" type="button" data-copy-text="${escapeHtml(d.phone)}">КОПИРОВАТЬ СБП</button>
               </div>
-              <div class="card-desc" style="margin-top:8px;">Заявка уже отправлена администратору. После перевода доступ начислится автоматически после проверки.</div>
+              <div class="card-desc" style="margin-top:8px;">Заявка отправлена администратору. После проверки перевода статус в «Моих заказах» станет <b>ОПЛАЧЕН</b>.</div>
             </div>`;
           orderBox.scrollIntoView({ behavior: 'smooth' });
         }
@@ -772,14 +856,37 @@
         await navigator.clipboard.writeText(text);
         alert('Скопировано в буфер обмена!');
       } catch (e) {
-        alert('Не удалось скопировать автоматически. Выдели и скопируй вручную: ' + text);
+        alert('Скопируй вручную: ' + text);
       }
     }
 
-    function copyRefLink() {
+    // Безопасная делегация событий (без inline onclick с динамическими данными)
+    document.addEventListener('click', ev => {
+      const nav = ev.target.closest('.nav-btn[data-tab]');
+      if (nav) {
+        switchTab(nav.dataset.tab);
+        return;
+      }
+      const orderBtn = ev.target.closest('button[data-order-item]');
+      if (orderBtn) {
+        createServerOrder(orderBtn.dataset.orderItem, orderBtn.dataset.orderMethod, orderBtn);
+        return;
+      }
+      const copyBtn = ev.target.closest('button[data-copy-text]');
+      if (copyBtn) {
+        safeCopy(copyBtn.dataset.copyText);
+      }
+    });
+
+    document.getElementById('search-submit-btn').addEventListener('click', runServerSearch);
+    document.getElementById('target-input').addEventListener('keydown', e => { if (e.key === 'Enter') runServerSearch(); });
+    document.getElementById('city-input').addEventListener('keydown', e => { if (e.key === 'Enter') runServerSearch(); });
+    document.getElementById('save-api-btn').addEventListener('click', saveApiEndpoint);
+    document.getElementById('refresh-orders-btn').addEventListener('click', loadServerProfile);
+    document.getElementById('copy-ref-btn').addEventListener('click', () => {
       const uid = document.getElementById('tg-id').textContent;
       safeCopy('https://t.me/simbix_osint_bot?start=ref_' + uid);
-    }
+    });
 
     loadServerProfile();
   </script>
