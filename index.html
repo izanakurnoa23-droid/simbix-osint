@@ -40,10 +40,10 @@
       min-height: 100vh;
       overflow-x: hidden;
       position: relative;
-      padding-bottom: 108px;
+      padding-bottom: 112px;
     }
 
-    /* Смешанный фон: вихри/текстура (фото 1) + густой чёрный дым/облака (фото 2) */
+    /* Смешанный фон: текстурные вихри + густой чёрный дым/облака */
     .bg-stage {
       position: fixed;
       inset: 0;
@@ -74,7 +74,6 @@
       filter: grayscale(100%) contrast(145%);
     }
 
-    /* Встроенный процедурный дым и звёздные вихри, если локальные bg1/bg2 ещё не добавлены */
     .bg-swirl-svg {
       position: absolute;
       inset: -10%;
@@ -115,20 +114,18 @@
       100% { transform: translate(2%, 3%) scale(1.06); }
     }
 
-    /* Контейнер */
     .wrap {
-      max-width: 680px;
+      max-width: 720px;
       margin: 0 auto;
-      padding: 24px 16px 20px;
+      padding: 20px 14px 20px;
     }
 
-    /* Шапка */
     .header {
       text-align: center;
-      margin-bottom: 24px;
-      padding: 18px 14px;
+      margin-bottom: 18px;
+      padding: 16px 14px;
       border: 1px solid var(--border-dim);
-      background: rgba(5, 5, 7, 0.72);
+      background: rgba(5, 5, 7, 0.76);
       backdrop-filter: blur(10px);
       border-radius: 16px;
     }
@@ -144,17 +141,16 @@
     }
 
     .logo-sub {
-      margin-top: 8px;
-      font-size: 12px;
+      margin-top: 6px;
+      font-size: 11px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--text-muted);
     }
 
-    /* Экраны вкладок */
     .tab-view {
       display: none;
-      animation: fadeIn 0.25s ease;
+      animation: fadeIn 0.22s ease;
     }
 
     .tab-view.active {
@@ -168,33 +164,32 @@
 
     .section-heading {
       font-family: var(--font-block);
-      font-size: 15px;
+      font-size: 14px;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       color: #ffffff;
     }
 
-    /* Карточки */
     .card {
-      background: rgba(6, 6, 8, 0.82);
+      background: rgba(6, 6, 8, 0.84);
       border: 1px solid var(--border-dim);
       border-radius: 14px;
-      padding: 16px;
+      padding: 15px;
       margin-bottom: 12px;
       backdrop-filter: blur(8px);
-      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+      transition: border-color 0.22s ease;
     }
 
     @media (hover: hover) {
       .card:hover {
-        border-color: rgba(255, 255, 255, 0.35);
+        border-color: rgba(255, 255, 255, 0.34);
       }
     }
 
     .card-title {
       font-family: var(--font-block);
-      font-size: 13px;
+      font-size: 12.5px;
       letter-spacing: 0.05em;
       text-transform: uppercase;
       color: #ffffff;
@@ -202,9 +197,184 @@
     }
 
     .card-desc {
-      font-size: 13.5px;
+      font-size: 13px;
       line-height: 1.5;
       color: #d1d5db;
+    }
+
+    /* Поле ввода поиска */
+    .search-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 15px 14px;
+      background: #030305;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 12px;
+      color: #ffffff;
+      font-family: var(--font-block);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .search-input::placeholder {
+      color: #6b7280;
+      font-family: var(--font-body);
+      font-weight: 500;
+      letter-spacing: normal;
+    }
+
+    .search-input:focus {
+      border-color: #ffffff;
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.22);
+    }
+
+    .quick-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      background: #08080c;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #d1d5db;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    @media (hover: hover) {
+      .pill:hover {
+        border-color: #ffffff;
+        color: #ffffff;
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+      }
+    }
+
+    /* Чёрные кнопки с увеличением и свечением на ПК */
+    .black-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 14px 14px;
+      background: var(--btn-black);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 12px;
+      font-family: var(--font-block);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  box-shadow 0.22s ease,
+                  border-color 0.22s ease,
+                  background-color 0.22s ease;
+    }
+
+    @media (hover: hover) {
+      .black-btn:hover {
+        transform: scale(1.03);
+        background: #0b0b0f;
+        border-color: #ffffff;
+        box-shadow: 0 0 24px rgba(255, 255, 255, 0.58), 0 0 46px rgba(255, 255, 255, 0.22);
+      }
+    }
+
+    .black-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Сетка OSINT-ссылок в результатах */
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 420px) {
+      .link-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .osint-link {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-decoration: none;
+      background: #040406;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 10px;
+      padding: 11px 12px;
+      color: #ffffff;
+      transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  box-shadow 0.2s ease,
+                  border-color 0.2s ease,
+                  background-color 0.2s ease;
+    }
+
+    @media (hover: hover) {
+      .osint-link:hover {
+        transform: scale(1.035);
+        background: #0b0b10;
+        border-color: #ffffff;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.52);
+      }
+    }
+
+    .osint-link:active {
+      transform: scale(0.97);
+    }
+
+    .osint-link-title {
+      font-family: var(--font-block);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .osint-link-sub {
+      margin-top: 3px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .meta-table {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .profile-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 13px;
+    }
+
+    .profile-row:last-child {
+      border-bottom: none;
+    }
+
+    .profile-val {
+      font-family: var(--font-block);
+      font-size: 11.5px;
+      color: #ffffff;
+      text-align: right;
+      word-break: break-all;
     }
 
     .tag-row {
@@ -223,90 +393,37 @@
       color: #e5e7eb;
     }
 
-    /* Кнопки внутри страниц (чёрные + свечение и увеличение на ПК) */
-    .black-btn {
-      width: 100%;
-      margin-top: 12px;
-      padding: 14px 16px;
-      background: var(--btn-black);
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      border-radius: 12px;
-      font-family: var(--font-block);
-      font-size: 12px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
-                  box-shadow 0.22s ease,
-                  border-color 0.22s ease,
-                  background-color 0.22s ease;
-    }
-
-    @media (hover: hover) {
-      .black-btn:hover {
-        transform: scale(1.035);
-        background: #0b0b0f;
-        border-color: #ffffff;
-        box-shadow: 0 0 24px rgba(255, 255, 255, 0.55), 0 0 48px rgba(255, 255, 255, 0.22);
-      }
-    }
-
-    .black-btn:active {
-      transform: scale(0.98);
-    }
-
-    /* Профиль */
-    .profile-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 13.5px;
-    }
-
-    .profile-row:last-child {
-      border-bottom: none;
-    }
-
-    .profile-val {
-      font-family: var(--font-block);
-      font-size: 12px;
-      color: #ffffff;
-    }
-
-    /* Нижняя панель из 3 чёрных кнопок */
+    /* Нижняя панель из 4 чёрных кнопок */
     .bottom-dock {
       position: fixed;
       left: 0;
       right: 0;
       bottom: 0;
       z-index: 50;
-      padding: 12px 14px calc(14px + env(safe-area-inset-bottom));
-      background: linear-gradient(to top, rgba(2, 2, 3, 0.96) 65%, rgba(2, 2, 3, 0));
+      padding: 10px 10px calc(12px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, rgba(2, 2, 3, 0.98) 68%, rgba(2, 2, 3, 0));
       display: flex;
       justify-content: center;
     }
 
     .dock-inner {
       width: 100%;
-      max-width: 680px;
+      max-width: 720px;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
     }
 
     .nav-btn {
       background: var(--btn-black);
-      color: #a1a1aa;
+      color: #9ca3af;
       border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 12px;
-      padding: 15px 6px;
+      border-radius: 11px;
+      padding: 14px 4px;
       font-family: var(--font-block);
       font-weight: 900;
-      font-size: clamp(10px, 2.8vw, 12.5px);
-      letter-spacing: 0.05em;
+      font-size: clamp(9px, 2.4vw, 11.5px);
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       cursor: pointer;
       text-align: center;
@@ -319,18 +436,17 @@
 
     .nav-btn.active {
       color: #ffffff;
-      border-color: rgba(255, 255, 255, 0.65);
-      box-shadow: 0 0 16px rgba(255, 255, 255, 0.22);
+      border-color: rgba(255, 255, 255, 0.68);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.24);
     }
 
-    /* Эффект для ПК при наведении курсора на нижние кнопки */
     @media (hover: hover) {
       .nav-btn:hover {
         transform: translateY(-4px) scale(1.06);
         background: #0a0a0e;
         color: #ffffff;
         border-color: #ffffff;
-        box-shadow: 0 0 24px rgba(255, 255, 255, 0.65),
+        box-shadow: 0 0 24px rgba(255, 255, 255, 0.68),
                     0 0 46px rgba(210, 225, 255, 0.3),
                     inset 0 0 10px rgba(255, 255, 255, 0.18);
       }
@@ -363,57 +479,72 @@
       <div class="logo-sub">РАЗВЕДКА ПО ОТКРЫТЫМ ИСТОЧНИКАМ</div>
     </header>
 
-    <!-- ВКЛАДКА 1: ФУНКЦИИ -->
-    <main id="tab-functions" class="tab-view active">
+    <!-- ВКЛАДКА 1: ГЛУБОКИЙ ПОИСК ПО ID / USERNAME -->
+    <main id="tab-search" class="tab-view active">
+      <div class="section-heading">ГЛУБОКИЙ ПОИСК ПО ID / USERNAME</div>
+
+      <div class="card">
+        <div class="search-box">
+          <input
+            id="target-input"
+            class="search-input"
+            type="text"
+            placeholder="Введи @username, t.me/ник или цифровой Telegram ID..."
+            onkeydown="if(event.key==='Enter') runDeepSearch()"
+          />
+          <div class="quick-pills">
+            <button class="pill" onclick="fillSelfId()">Мой Telegram ID</button>
+            <button class="pill" onclick="setExample('@durov')">Пример: @durov</button>
+            <button class="pill" onclick="setExample('6257028021')">Пример: ID</button>
+          </div>
+          <button class="black-btn" onclick="runDeepSearch()">ЗАПУСТИТЬ ПОЛНЫЙ OSINT-СКАН</button>
+        </div>
+      </div>
+
+      <div id="search-results"></div>
+    </main>
+
+    <!-- ВКЛАДКА 2: ФУНКЦИИ -->
+    <section id="tab-functions" class="tab-view">
       <div class="section-heading">ВСЕ ФУНКЦИИ СИСТЕМЫ</div>
 
       <div class="card">
-        <div class="card-title">1. OSINT ПО НОМЕРУ ТЕЛЕФОНА</div>
+        <div class="card-title">1. ГЛУБОКИЙ ПОИСК ПО TG ID И USERNAME</div>
         <div class="card-desc">
-          Автоматический разбор номера по всем открытым веткам: определение оператора, региона и часового пояса, генерация всех форматов записи и быстрые ссылки для проверки через открытые источники.
+          Определение примерной даты регистрации по цифровому ID, поиск архивных версий профиля через Wayback Machine, сканирование 700+ млн индексированных постов Telegram и кросс-проверка ника на 12+ платформах.
         </div>
         <div class="tag-row">
-          <span class="tag">Оператор и регион</span>
-          <span class="tag">Поисковики (Google / Яндекс / DDG)</span>
-          <span class="tag">Мессенджеры (TG / WA / Viber)</span>
-          <span class="tag">Карты и справочники (2ГИС / Zoon)</span>
-          <span class="tag">Объявления (Авито / Юла)</span>
+          <span class="tag">Возраст аккаунта по ID</span>
+          <span class="tag">Wayback Machine</span>
+          <span class="tag">Архив постов TGDev</span>
+          <span class="tag">Google / Яндекс Dorks</span>
+          <span class="tag">Кросс-платформы</span>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title">2. ИНТЕРАКТИВНЫЙ ГРАФ СВЯЗЕЙ (ДЕРЕВО)</div>
+        <div class="card-title">2. OSINT ПО НОМЕРУ ТЕЛЕФОНА</div>
         <div class="card-desc">
-          Визуальная доска расследования с узлами и ветками: связывай номер, никнеймы, соцсети, локации и заметки в единое интерактивное дерево прямо внутри Telegram.
-        </div>
-        <div class="tag-row">
-          <span class="tag">Узлы и ветки</span>
-          <span class="tag">Ручное добавление зацепок</span>
-          <span class="tag">Экспорт досье</span>
+          Авторазбор номера по открытым веткам: оператор, регион, часовой пояс, быстрый переход в мессенджеры (TG/WA/Viber), карты (2ГИС/Яндекс) и доски объявлений (Авито/Юла).
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title">3. ПОИСК ПО НИКУ И ОТКРЫТЫМ СЛЕДАМ</div>
+        <div class="card-title">3. ИНТЕРАКТИВНЫЙ ГРАФ СВЯЗЕЙ (ДЕРЕВО)</div>
         <div class="card-desc">
-          Проверка публичного никнейма по открытым площадкам, репозиториям, форумам и игровым профилям без входа в аккаунты и без закрытых баз.
-        </div>
-        <div class="tag-row">
-          <span class="tag">GitHub / GitLab</span>
-          <span class="tag">Steam / Reddit</span>
-          <span class="tag">Открытые профили</span>
+          Визуальная доска расследования с узлами и ветками: связывай ID, никнеймы, соцсети, локации и заметки в единое дерево прямо внутри Telegram.
         </div>
       </div>
-    </main>
+    </section>
 
-    <!-- ВКЛАДКА 2: ОПЛАТА -->
+    <!-- ВКЛАДКА 3: ОПЛАТА -->
     <section id="tab-payment" class="tab-view">
       <div class="section-heading">ТАРИФЫ И ОПЛАТА VIP</div>
 
       <div class="card">
         <div class="card-title">VIP ДОСТУП — 7 ДНЕЙ</div>
         <div class="card-desc">
-          Снятие дневного лимита проверок, полный набор OSINT-веток по номеру телефона и сохранение интерактивных графов связей.
+          Снятие дневного лимита проверок, полный набор OSINT-веток по ID, нику и номеру телефона, сохранение интерактивных графов связей.
         </div>
         <button class="black-btn" onclick="sendTariffToBot('vip_7')">КУПИТЬ — 149 ₽ / 85 ⭐</button>
       </div>
@@ -421,7 +552,7 @@
       <div class="card">
         <div class="card-title">VIP ДОСТУП — 30 ДНЕЙ</div>
         <div class="card-desc">
-          Максимальный приоритет запросов, безлимитный разбор номеров и ников, неограниченное количество деревьев связей.
+          Максимальный приоритет запросов, безлимитный разбор аккаунтов и номеров, неограниченное количество деревьев связей.
         </div>
         <button class="black-btn" onclick="sendTariffToBot('vip_30')">КУПИТЬ — 349 ₽ / 199 ⭐</button>
       </div>
@@ -435,7 +566,7 @@
       </div>
     </section>
 
-    <!-- ВКЛАДКА 3: ПРОФИЛЬ -->
+    <!-- ВКЛАДКА 4: ПРОФИЛЬ -->
     <section id="tab-profile" class="tab-view">
       <div class="section-heading">ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ</div>
 
@@ -461,10 +592,11 @@
     </section>
   </div>
 
-  <!-- 3 ЧЁРНЫЕ КНОПКИ ВНИЗУ -->
+  <!-- 4 ЧЁРНЫЕ КНОПКИ ВНИЗУ -->
   <nav class="bottom-dock">
     <div class="dock-inner">
-      <button class="nav-btn active" data-tab="functions" onclick="switchTab('functions', this)">ФУНКЦИИ</button>
+      <button class="nav-btn active" data-tab="search" onclick="switchTab('search', this)">ПОИСК</button>
+      <button class="nav-btn" data-tab="functions" onclick="switchTab('functions', this)">ФУНКЦИИ</button>
       <button class="nav-btn" data-tab="payment" onclick="switchTab('payment', this)">ОПЛАТА</button>
       <button class="nav-btn" data-tab="profile" onclick="switchTab('profile', this)">ПРОФИЛЬ</button>
     </div>
@@ -472,15 +604,18 @@
 
   <script>
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    let currentTgUserId = '6257028021';
+
     if (tg) {
       tg.ready();
       tg.expand();
       const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
       if (user) {
+        currentTgUserId = String(user.id);
         document.getElementById('tg-name').textContent = (user.first_name || 'ПОЛЬЗОВАТЕЛЬ').toUpperCase();
         document.getElementById('tg-username').textContent = user.username ? '@' + user.username.toUpperCase() : 'БЕЗ НИКА';
-        document.getElementById('tg-id').textContent = String(user.id);
-        if (String(user.id) === '6257028021') {
+        document.getElementById('tg-id').textContent = currentTgUserId;
+        if (currentTgUserId === '6257028021') {
           document.getElementById('tg-status').textContent = 'ADMIN / VIP';
         }
       }
@@ -493,11 +628,196 @@
       btnEl.classList.add('active');
     }
 
+    function fillSelfId() {
+      document.getElementById('target-input').value = currentTgUserId;
+      runDeepSearch();
+    }
+
+    function setExample(val) {
+      document.getElementById('target-input').value = val;
+      runDeepSearch();
+    }
+
+    // Оценка примерной даты создания аккаунта по цифровому ID Telegram
+    function estimateIdAge(idNum) {
+      const milestones = [
+        { id: 10000000, date: 'Конец 2013 — начало 2014' },
+        { id: 50000000, date: 'Середина 2014' },
+        { id: 100000000, date: 'Начало 2015' },
+        { id: 200000000, date: 'Начало 2016' },
+        { id: 350000000, date: 'Начало 2017' },
+        { id: 500000000, date: 'Начало 2018' },
+        { id: 750000000, date: 'Начало 2019' },
+        { id: 1000000000, date: 'Начало 2020' },
+        { id: 1500000000, date: 'Конец 2020 — начало 2021' },
+        { id: 2147483647, date: 'Осень 2021 (граница 32-bit ID)' },
+        { id: 5000000000, date: 'Начало 2022' },
+        { id: 6000000000, date: 'Начало 2023' },
+        { id: 6800000000, date: 'Конец 2023 — начало 2024' },
+        { id: 7500000000, date: 'Конец 2024 — начало 2025' },
+        { id: 8200000000, date: 'Конец 2025 — 2026' }
+      ];
+      if (idNum <= 0) return 'Некорректный ID';
+      for (let i = 0; i < milestones.length; i++) {
+        if (idNum <= milestones[i].id) {
+          return milestones[i].date;
+        }
+      }
+      return '2026 год (свежая регистрация)';
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+
+    function makeLinkCard(title, sub, url) {
+      return `
+        <a class="osint-link" href="${url}" target="_blank" rel="noopener noreferrer">
+          <span class="osint-link-title">${escapeHtml(title)}</span>
+          <span class="osint-link-sub">${escapeHtml(sub)}</span>
+        </a>
+      `;
+    }
+
+    function runDeepSearch() {
+      const raw = document.getElementById('target-input').value.trim();
+      const box = document.getElementById('search-results');
+      if (!raw) {
+        box.innerHTML = `<div class="card"><div class="card-desc">Введи @username, ссылку t.me/... или цифровой Telegram ID для запуска сканирования.</div></div>`;
+        return;
+      }
+
+      // Очистка ввода
+      let clean = raw
+        .replace(/^https?:\/\/(t\.me|telegram\.me|telegram\.dog)\//i, '')
+        .replace(/^@+/, '')
+        .split('/')[0]
+        .split('?')[0]
+        .trim();
+
+      const isNumericId = /^\d{5,15}$/.test(clean);
+      const q = encodeURIComponent(clean);
+
+      if (isNumericId) {
+        const idNum = Number(clean);
+        const approxDate = estimateIdAge(idNum);
+        const bitType = idNum > 2147483647 ? '64-bit (новый диапазон)' : '32-bit (старый диапазон)';
+
+        box.innerHTML = `
+          <div class="card">
+            <div class="card-title">ПАСПОРТ TELEGRAM ID: ${escapeHtml(clean)}</div>
+            <div class="meta-table">
+              <div class="profile-row"><span>Тип цели</span><span class="profile-val">ЦИФРОВОЙ USER / BOT ID</span></div>
+              <div class="profile-row"><span>Примерная регистрация</span><span class="profile-val">${escapeHtml(approxDate)}</span></div>
+              <div class="profile-row"><span>Архитектура ID</span><span class="profile-val">${bitType}</span></div>
+            </div>
+            <div class="link-grid">
+              ${makeLinkCard('Открыть профиль (TG)', 'tg://user?id=' + clean, 'tg://user?id=' + clean)}
+              ${makeLinkCard('Открыть диалог (TG)', 'tg://openmessage?user_id=' + clean, 'tg://openmessage?user_id=' + clean)}
+              ${makeLinkCard('CreationDateBot', 'Точная дата создания', 'https://t.me/creationdatebot')}
+              ${makeLinkCard('UserInfoBot', 'Проверка карточки ID', 'https://t.me/usinfobot')}
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">ПОИСК ID В ИНДЕКСАХ И ПОИСКОВИКАХ</div>
+            <div class="card-desc">Поиск упоминаний этого цифрового ID в открытых чатах, постах Telegraph, логах ботов и веб-страницах:</div>
+            <div class="link-grid">
+              ${makeLinkCard('Google: точный ID', '"' + clean + '"', 'https://www.google.com/search?q=%22' + q + '%22')}
+              ${makeLinkCard('Google: внутри t.me', 'site:t.me "' + clean + '"', 'https://www.google.com/search?q=site%3At.me+%22' + q + '%22')}
+              ${makeLinkCard('Яндекс: поиск ID', '"' + clean + '"', 'https://yandex.ru/search/?text=%22' + q + '%22')}
+              ${makeLinkCard('DuckDuckGo: ID', '"' + clean + '"', 'https://duckduckgo.com/?q=%22' + q + '%22')}
+              ${makeLinkCard('Telegraph статьи', 'site:telegra.ph "' + clean + '"', 'https://www.google.com/search?q=site%3Atelegra.ph+%22' + q + '%22')}
+              ${makeLinkCard('GitHub упоминания', 'Код и базы на GitHub', 'https://github.com/search?q=%22' + q + '%22&type=code')}
+            </div>
+          </div>
+
+          <div class="card">
+            <button class="black-btn" onclick="sendSearchToBot('id', '${escapeHtml(clean)}')">ПЕРЕДАТЬ В БОТА ДЛЯ ДОСЬЕ / ГРАФА</button>
+          </div>
+        `;
+      } else {
+        const handleAt = '@' + clean;
+        const qAt = encodeURIComponent(handleAt);
+        const qLink = encodeURIComponent('t.me/' + clean);
+
+        box.innerHTML = `
+          <div class="card">
+            <div class="card-title">1. ПРЯМОЙ ДОСТУП И ВЕБ-АРХИВЫ (@${escapeHtml(clean)})</div>
+            <div class="card-desc">Просмотр карточки без авторизации и проверка старых версий профиля (смена ника, старое био, удалённые посты):</div>
+            <div class="link-grid">
+              ${makeLinkCard('Открыть в Telegram', 't.me/' + clean, 'https://t.me/' + q)}
+              ${makeLinkCard('Веб-лента постов', 't.me/s/' + clean + ' (без входа)', 'https://t.me/s/' + q)}
+              ${makeLinkCard('Wayback Machine', 'Архив старых копий t.me', 'https://web.archive.org/web/*/t.me/' + q)}
+              ${makeLinkCard('Archive.today', 'Снимки страницы профиля', 'https://archive.ph/https://t.me/' + q)}
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">2. ПОИСК ПО ЧАТАМ, КАНАЛАМ И ПОСТАМ</div>
+            <div class="card-desc">Сканирование открытых сообщений, репостов и упоминаний юзернейма внутри Telegram:</div>
+            <div class="link-grid">
+              ${makeLinkCard('TGDev (700M+ постов)', 'Поиск по сообщениям TG', 'https://tgdev.io/tme?q=' + q)}
+              ${makeLinkCard('Lyzem Search', 'Поисковик по Telegram', 'https://lyzem.com/search?q=' + q)}
+              ${makeLinkCard('TGStat.ru', 'Аналитика каналов и постов', 'https://tgstat.ru/search?q=' + q)}
+              ${makeLinkCard('Google: site:t.me', 'Упоминания в чатах TG', 'https://www.google.com/search?q=site%3At.me+%22' + q + '%22')}
+              ${makeLinkCard('Google: Telegraph', 'Статьи на telegra.ph', 'https://www.google.com/search?q=site%3Atelegra.ph+%22' + q + '%22')}
+              ${makeLinkCard('Яндекс: внутри t.me', 'Индекс страниц Telegram', 'https://yandex.ru/search/?text=site%3At.me+%22' + q + '%22')}
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">3. ГДЕ ЗАСВЕЧЕН КОНТАКТ В ИНТЕРНЕТЕ</div>
+            <div class="card-desc">Поиск страниц, форумов и соцсетей, где пользователь оставлял ссылку на свой Telegram:</div>
+            <div class="link-grid">
+              ${makeLinkCard('Google: "t.me/' + clean + '"', 'Прямые ссылки в вебе', 'https://www.google.com/search?q=%22' + qLink + '%22')}
+              ${makeLinkCard('Google: "@' + clean + '"', 'Упоминания с собачкой', 'https://www.google.com/search?q=%22' + qAt + '%22')}
+              ${makeLinkCard('Яндекс: "t.me/' + clean + '"', 'Поиск по Рунету и ВК', 'https://yandex.ru/search/?text=%22' + qLink + '%22')}
+              ${makeLinkCard('DuckDuckGo: точный', 'Без фильтрации выдачи', 'https://duckduckgo.com/?q=%22' + qLink + '%22+OR+%22' + qAt + '%22')}
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">4. КРОСС-ПЛАТФОРМЕННЫЙ ПОИСК НИКА (12 ПЛОЩАДОК)</div>
+            <div class="card-desc">Проверка совпадения юзернейма <b>${escapeHtml(clean)}</b> на других сервисах:</div>
+            <div class="link-grid">
+              ${makeLinkCard('GitHub', 'github.com/' + clean, 'https://github.com/' + q)}
+              ${makeLinkCard('ВКонтакте', 'vk.com/' + clean, 'https://vk.com/' + q)}
+              ${makeLinkCard('Steam', 'steamcommunity.com/id/' + clean, 'https://steamcommunity.com/id/' + q)}
+              ${makeLinkCard('Reddit', 'reddit.com/user/' + clean, 'https://www.reddit.com/user/' + q)}
+              ${makeLinkCard('TikTok', 'tiktok.com/@' + clean, 'https://www.tiktok.com/@' + q)}
+              ${makeLinkCard('Instagram', 'instagram.com/' + clean, 'https://www.instagram.com/' + q)}
+              ${makeLinkCard('YouTube', 'youtube.com/@' + clean, 'https://www.youtube.com/@' + q)}
+              ${makeLinkCard('Twitch', 'twitch.tv/' + clean, 'https://www.twitch.tv/' + q)}
+              ${makeLinkCard('Pinterest', 'pinterest.com/' + clean, 'https://www.pinterest.com/' + q)}
+              ${makeLinkCard('SoundCloud', 'soundcloud.com/' + clean, 'https://soundcloud.com/' + q)}
+              ${makeLinkCard('Roblox', 'Поиск игрока по нику', 'https://www.roblox.com/search/users?keyword=' + q)}
+              ${makeLinkCard('InstantUsername', 'Авточек 100+ сайтов', 'https://instantusername.com/?q=' + q)}
+            </div>
+          </div>
+
+          <div class="card">
+            <button class="black-btn" onclick="sendSearchToBot('username', '${escapeHtml(clean)}')">ПЕРЕДАТЬ В БОТА ДЛЯ ДОСЬЕ / ГРАФА</button>
+          </div>
+        `;
+      }
+    }
+
+    function sendSearchToBot(kind, target) {
+      if (tg) {
+        tg.sendData(JSON.stringify({ action: 'osint_tg', kind: kind, target: target }));
+      } else {
+        alert('Цель передана: ' + kind + ' -> ' + target);
+      }
+    }
+
     function sendTariffToBot(tariffCode) {
       if (tg) {
         tg.sendData(JSON.stringify({ action: 'buy_tariff', tariff: tariffCode }));
       } else {
-        alert('Тариф выбран: ' + tariffCode + '. При запуске внутри Telegram откроется оплата в боте.');
+        alert('Тариф выбран: ' + tariffCode);
       }
     }
 
